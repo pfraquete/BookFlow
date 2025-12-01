@@ -82,7 +82,15 @@ def create_app() -> FastAPI:
     @application.get("/health")
     async def health_check():
         s = get_settings()
-        return {"status": "healthy", "app": s.APP_NAME, "version": s.APP_VERSION}
+        return {
+            "status": "healthy",
+            "app": s.APP_NAME,
+            "version": s.APP_VERSION,
+            "services": {
+                "supabase": "configured" if s.validate_supabase() else "not_configured",
+                "anthropic": "configured" if s.validate_anthropic() else "not_configured"
+            }
+        }
     
     @application.get("/")
     async def root():
