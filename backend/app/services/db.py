@@ -13,18 +13,24 @@ logger = logging.getLogger(__name__)
 
 
 @lru_cache()
-def get_supabase_client() -> Client:
-    """Retorna cliente Supabase cacheado"""
+def get_supabase_client() -> Optional[Client]:
+    """Retorna cliente Supabase cacheado, ou None se não configurado"""
     settings = get_settings()
+    if not settings.validate_supabase():
+        logger.warning("Supabase not configured. Database operations will fail.")
+        return None
     return create_client(
         settings.SUPABASE_URL,
         settings.SUPABASE_SERVICE_ROLE_KEY  # Service role para bypass RLS quando necessário
     )
 
 
-def get_user_client(access_token: str) -> Client:
+def get_user_client(access_token: str) -> Optional[Client]:
     """Retorna cliente Supabase com token do usuário (respeita RLS)"""
     settings = get_settings()
+    if not settings.validate_supabase():
+        logger.warning("Supabase not configured. User client unavailable.")
+        return None
     client = create_client(settings.SUPABASE_URL, settings.SUPABASE_ANON_KEY)
     client.auth.set_session(access_token, "")
     return client
@@ -32,9 +38,11 @@ def get_user_client(access_token: str) -> Client:
 
 class DatabaseService:
     """Serviço de acesso ao banco de dados"""
-    
+
     def __init__(self, client: Optional[Client] = None):
-        self.client = client or get_supabase_client()
+        self.client = client if client is not None else get_supabase_client()
+        if self.client is None:
+            logger.warning("DatabaseService initialized without Supabase client")
     
     # =========================================================================
     # PROJECTS

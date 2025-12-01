@@ -16,12 +16,19 @@ try:
     from weasyprint import HTML, CSS
     from weasyprint.text.fonts import FontConfiguration
     WEASYPRINT_AVAILABLE = True
-except OSError:
+    logger.info("WeasyPrint loaded successfully")
+except (OSError, ImportError) as e:
     WEASYPRINT_AVAILABLE = False
     HTML = None
     CSS = None
     FontConfiguration = None
-    logger.warning("WeasyPrint system dependencies not found. PDF rendering will be disabled.")
+    logger.warning(f"WeasyPrint not available: {e}. PDF rendering will be disabled.")
+except Exception as e:
+    WEASYPRINT_AVAILABLE = False
+    HTML = None
+    CSS = None
+    FontConfiguration = None
+    logger.warning(f"WeasyPrint import failed with unexpected error: {type(e).__name__}: {e}. PDF rendering will be disabled.")
 
 from app.config import get_settings
 
