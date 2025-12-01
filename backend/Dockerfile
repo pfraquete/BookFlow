@@ -30,8 +30,11 @@ RUN mkdir -p /tmp/bookflow
 ENV PYTHONUNBUFFERED=1
 ENV TEMP_DIR=/tmp/bookflow
 
-# Expor porta
+# Expor porta (Railway uses dynamic PORT)
 EXPOSE 8000
 
-# Comando de inicialização
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Default PORT for local development
+ENV PORT=8000
+
+# Comando de inicialização - uses shell form to expand $PORT
+CMD uvicorn app.main:app --host 0.0.0.0 --port $PORT

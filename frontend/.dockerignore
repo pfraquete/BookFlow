@@ -1,0 +1,18 @@
+# Dependencies
+node_modules
+
+# Build outputs (regenerated during build)
+.next
+out
+tsconfig.tsbuildinfo
+
+# Development files
+.env*.local
+*.log
+npm-debug.log*
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo

@@ -1,0 +1,6 @@
+# Nixpacks configuration for Next.js frontend
+# Fixes cache mount issue with tsconfig.tsbuildinfo
+
+[phases.build]
+# Disable the problematic tsbuildinfo cache that conflicts with existing file
+cacheDirectories = [".next/cache", "node_modules/.cache"]
