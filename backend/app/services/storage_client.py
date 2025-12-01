@@ -18,17 +18,21 @@ logger = logging.getLogger(__name__)
 
 class StorageClient:
     """Cliente para Supabase Storage"""
-    
+
     BUCKET_UPLOADS = "uploads"      # PDFs originais
     BUCKET_PREVIEWS = "previews"    # HTMLs de preview
     BUCKET_EXPORTS = "exports"      # PDFs finais
-    
+
     def __init__(self):
         settings = get_settings()
-        self.client = create_client(
-            settings.SUPABASE_URL,
-            settings.SUPABASE_SERVICE_ROLE_KEY
-        )
+        if settings.validate_supabase():
+            self.client = create_client(
+                settings.SUPABASE_URL,
+                settings.SUPABASE_SERVICE_ROLE_KEY
+            )
+        else:
+            self.client = None
+            logger.warning("Supabase not configured. Storage operations will fail.")
     
     def _generate_path(self, user_id: str, project_id: str, filename: str, bucket: str) -> str:
         """Gera path único para arquivo"""
