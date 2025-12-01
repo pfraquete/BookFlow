@@ -35,6 +35,10 @@ npm-debug.log*
 htmlcov/
 .pytest_cache/
 
+# TypeScript build info
+tsconfig.tsbuildinfo
+*.tsbuildinfo
+
 # Misc
 *.bak
 *.tmp
